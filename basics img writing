@@ -1,0 +1,117 @@
+clc;clear;close all;
+
+% Reading and plotting image 1
+a = imread('img.jpg');
+a1 = rgb2gray(a);
+a2 = im2double(a);
+a3 = imbinarize(a1);
+
+subplot(2,4,1);
+imshow(a);
+title('Original Image 1');
+
+subplot(2,4,2);
+imshow(a1);
+title('Grayscale Image 1');
+
+subplot(2,4,3);
+imshow(a2);
+title('Double Image 1');
+
+subplot(2,4,4);
+imshow(a3);
+title('Binary Image 1');
+
+% Reading and plotting image 2
+b = imread('img2.png');
+b1 = rgb2gray(b);
+b2 = im2double(b);
+b3 = imbinarize(b1);
+
+subplot(2,4,5);
+imshow(b);
+title('Original Image 2');
+
+subplot(2,4,6);
+imshow(b1);
+title('Grayscale Image 2');
+
+subplot(2,4,7);
+imshow(b2);
+title('Double Image 2');
+
+subplot(2,4,8);
+imshow(b3);
+title('Binary Image 2');
+
+% resize img
+targetsize = [size(a,1), size(a,2)];
+
+img1 = imresize(a, targetsize);
+img2 = imresize(b, targetsize);
+
+img1D = im2double(img1);
+img2D = im2double(img2);
+
+imgs = cell(6,1);
+
+imgs{1} = imabsdiff(img1D, img2D);
+imgs{2} = imsubtract(img1D, img2D);
+imgs{3} = imadd(img1D, img2D);
+imgs{4} = imcomplement(img1D);
+imgs{5} = imdivide(img1D, img2D + eps);
+imgs{6} = immultiply(img1D, img2D);
+
+subplot(2,3,1);
+imshow(imgs{1});
+title('Absolute Difference');
+
+subplot(2,3,2);
+imshow(imgs{2});
+title('Subtraction');
+
+subplot(2,3,3);
+imshow(imgs{3});
+title('Addition');
+
+subplot(2,3,4);
+imshow(imgs{4});
+title('Complement');
+
+subplot(2,3,5);
+imshow(imgs{5});
+title('Division');
+
+subplot(2,3,6);
+imshow(imgs{6});
+title('Multiplication');
+
+ %impixel apply krna 
+ figure;
+ imshow(a)
+ title('select pixels using impixel')
+ [x,y,pixelValues]=impixel(a);
+ disp('selected pixels w cordinates n rgb values');
+ disp([x,y,pixelValues]);
+ 
+%dct
+dct_img = dct2(a2);
+
+%inversedct
+idct_img = idct2(dct_img);
+
+%plot dct and inverse dct
+figure;
+
+subplot(1,3,1);
+imshow(a2);
+title('Original Image');
+
+subplot(1,3,2);
+imshow(log(1 + abs(dct_img)), []);
+title('DCT Image');
+
+subplot(1,3,3);
+imshow(idct_img, []);
+title('Inverse DCT Image');
+
