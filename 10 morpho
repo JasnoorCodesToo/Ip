@@ -1,0 +1,60 @@
+clc;clear;close all;
+a = imread('eye.jpg');
+a = rgb2gray(a);
+bw = imbinarize(a);
+% Structuring element
+se = strel('disk',3,0);
+% Morphological operations
+d = imdilate(bw,se);
+e = imerode(bw,se);
+o = imopen(bw,se);
+c = imclose(bw,se);
+% Thinning and thickening
+t = bwmorph(bw,'thin',Inf);
+th = bwmorph(bw,'thicken',Inf);
+% Top-hat and bottom-hat
+top = imtophat(a,se);
+bottom = imbothat(a,se);
+% Display results
+figure;
+
+subplot(3,4,1);
+imshow(a);
+title('Original Image');
+
+subplot(3,4,2);
+imshow(bw);
+title('Binary Image');
+
+subplot(3,4,3);
+imshow(d);
+title('Dilation');
+
+subplot(3,4,4);
+imshow(e);
+title('Erosion');
+
+subplot(3,4,5);
+imshow(o);
+title('Opening');
+
+subplot(3,4,6);
+imshow(c);
+title('Closing');
+
+
+subplot(3,4,7);
+imshow(t);
+title('Thinning');
+
+subplot(3,4,8);
+imshow(th);
+title('Thickening');
+
+subplot(3,4,9);
+imshow(top);
+title('Top-Hat');
+
+subplot(3,4,10);
+imshow(bottom);
+title('Bottom-Hat');
