@@ -1,0 +1,79 @@
+
+clc;
+clear;
+close all;
+
+% Read image
+I = imread('cameraman.tif');
+I = im2double(I);
+
+% Define filters
+A = ones(3,3)/9;
+
+B = [1 2 1; 2 4 2; 1 2 1]/16;
+
+Px = [-1 0 1; -1 0 1; -1 0 1];
+Py = [-1 -1 -1; 0 0 0; 1 1 1];
+
+Sx = [-1 0 1; -2 0 2; -1 0 1];
+Sy = [-1 -2 -1; 0 0 0; 1 2 1];
+
+H = [0 0 -1 0 0;
+     0 -1 -2 -1 0;
+    -1 -2 16 -2 -1;
+     0 -1 -2 -1 0;
+     0 0 -1 0 0];
+
+% Apply user-defined function
+avg = myfilter(I,A);
+wavg = myfilter(I,B);
+
+prewittX = myfilter(I,Px);
+prewittY = myfilter(I,Py);
+
+sobelX = myfilter(I,Sx);
+sobelY = myfilter(I,Sy);
+
+logImg = myfilter(I,H);
+
+% Display results
+subplot(2,4,1); imshow(I); title('Original');
+subplot(2,4,2); imshow(avg,[]); title('Averaging');
+subplot(2,4,3); imshow(wavg,[]); title('Weighted Average');
+subplot(2,4,4); imshow(prewittX,[]); title('Prewitt X');
+subplot(2,4,5); imshow(prewittY,[]); title('Prewitt Y');
+subplot(2,4,6); imshow(sobelX,[]); title('Sobel X');
+subplot(2,4,7); imshow(sobelY,[]); title('Sobel Y');
+subplot(2,4,8); imshow(logImg,[]); title('LoG');
+
+% USER-DEFINED FILTER FUNCTION
+function out = myfilter(I,H)
+
+[m,n] = size(I);
+[a,b] = size(H);
+
+out = zeros(m,n);
+
+% Calculate padding size
+p = floor(a/2);
+q = floor(b/2);
+
+% Apply filter using loops
+for i = p+1:m-p
+    for j = q+1:n-q
+
+        sum = 0;
+
+        for x = 1:a
+            for y = 1:b
+                sum = sum + I(i+x-p-1,j+y-q-1)*H(x,y);
+            end
+        end
+
+        out(i,j) = sum;
+
+    end
+end
+
+end
+```
