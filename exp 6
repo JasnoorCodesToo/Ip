@@ -1,0 +1,154 @@
+
+clc;
+clear all;
+close all;
+
+% 1. Read and process Image A
+img = imread('IMG1.jpg');
+img = rgb2gray(img);
+img = im2double(img);
+
+[M,N] = size(img);
+
+% 2. Apply 2D Fourier Transform
+F = fft2(img);
+Fs = fftshift(F);
+
+% 3. Calculate Magnitude and Phase
+magnitude = abs(Fs);
+phase = angle(Fs);
+
+% 4. Display Original Image, Magnitude and Phase
+figure('Name','Fourier Spectrum');
+
+subplot(1,3,1);
+imshow(img);
+title('Original Image');
+
+subplot(1,3,2);
+imshow(log(1+magnitude),[]);
+title('Magnitude Spectrum');
+
+subplot(1,3,3);
+imshow(phase,[]);
+title('Phase Spectrum');
+
+
+% 5. Read and process Image B
+img2 = imread('IMG2.jpg');
+img2 = rgb2gray(img2);
+img2 = im2double(img2);
+
+% Resize Image B to match Image A
+img2 = imresize(img2,[M N]);
+
+% 6. Apply Fourier Transform to Image B
+F2 = fft2(img2);
+Fs2 = fftshift(F2);
+
+mag2 = abs(Fs2);
+ph2 = angle(Fs2);
+
+% 7. Swap Magnitude and Phase
+recon_A = ifft2(ifftshift(magnitude .* exp(1i*ph2)));
+recon_B = ifft2(ifftshift(mag2 .* exp(1i*phase)));
+
+% 8. Display Magnitude-Phase Swapping Results
+figure('Name','Role of Phase in Reconstruction');
+
+subplot(2,2,1);
+imshow(img);
+title('Image A');
+
+subplot(2,2,2);
+imshow(img2);
+title('Image B');
+
+subplot(2,2,3);
+imshow(real(recon_A),[]);
+title('Magnitude A + Phase B');
+
+subplot(2,2,4);
+imshow(real(recon_B),[]);
+title('Magnitude B + Phase A');
+
+
+% 9. Create Ideal Low Pass Filter
+u = (1:M) - M/2;
+v = (1:N) - N/2;
+
+[V,U] = meshgrid(v,u);
+
+D0 = 50;
+
+H = double(U.^2 + V.^2 <= D0^2);
+
+% 10. Display Ideal LPF Mask
+figure('Name','Ideal Circular LPF Mask');
+
+imagesc(H);
+axis image;
+colormap(jet);
+colorbar;
+title(['Ideal LPF Mask, D0 = ' num2str(D0)]);
+
+
+% 11. Apply Ideal Low Pass Filter
+G = Fs .* H;
+
+g = real(ifft2(ifftshift(G)));
+
+% 12. Display Ideal LPF Output
+figure('Name','Ideal Low Pass Filtered Image');
+
+subplot(1,2,1);
+imshow(img);
+title('Original Image');
+
+subplot(1,2,2);
+imshow(g,[]);
+title(['Ideal LPF Output, D0 = ' num2str(D0)]);
+
+
+% 13. Calculate Impulse Response of Ideal LPF
+psf = ifft2(ifftshift(H));
+psf_mag = fftshift(abs(psf));
+
+% 14. Display Impulse Response
+figure('Name','Impulse Response of Ideal LPF');
+
+imagesc(log(1+psf_mag));
+axis image;
+colormap(jet);
+colorbar;
+title('Impulse Response of Ideal LPF');
+
+
+% 15. Create Gaussian and Butterworth LPF
+D = sqrt(U.^2 + V.^2);
+
+H_gauss = exp(-(D.^2)/(2*D0^2));
+
+n_bw = 1;
+
+H_bw = 1 ./ (1 + (D./D0).^(2*n_bw));
+
+% 16. Apply Gaussian and Butterworth Filters
+g_gauss = real(ifft2(ifftshift(Fs .* H_gauss)));
+
+g_bw = real(ifft2(ifftshift(Fs .* H_bw)));
+
+% 17. Display Filter Comparison
+figure('Name','LPF Comparison');
+
+subplot(1,3,1);
+imshow(g,[]);
+title('Ideal LPF');
+
+subplot(1,3,2);
+imshow(g_gauss,[]);
+title('Gaussian LPF');
+
+subplot(1,3,3);
+imshow(g_bw,[]);
+title('Butterworth LPF');
