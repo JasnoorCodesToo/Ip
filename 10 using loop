@@ -1,0 +1,97 @@
+clc;
+clear;
+close all;
+
+% Read image
+a = imread('eye.jpg');
+
+% Convert RGB to grayscale
+if size(a,3) == 3
+    a = rgb2gray(a);
+end
+
+a = double(a);
+
+[m,n] = size(a);
+
+% Structuring element
+se = ones(3,3);
+
+% Zero padding
+p = zeros(m+2,n+2);
+p(2:m+1,2:n+1) = a;
+
+% Initialize images
+er = zeros(m,n);
+di = zeros(m,n);
+
+% EROSION: Minimum value in 3x3 window
+for i = 1:m
+    for j = 1:n
+        w = p(i:i+2,j:j+2);
+        er(i,j) = min(w(:));
+    end
+end
+
+% DILATION: Maximum value in 3x3 window
+for i = 1:m
+    for j = 1:n
+        w = p(i:i+2,j:j+2);
+        di(i,j) = max(w(:));
+    end
+end
+
+% OPENING = DILATION(EROSION)
+p1 = zeros(m+2,n+2);
+p1(2:m+1,2:n+1) = er;
+
+op = zeros(m,n);
+
+for i = 1:m
+    for j = 1:n
+        w = p1(i:i+2,j:j+2);
+        op(i,j) = max(w(:));
+    end
+end
+
+% CLOSING = EROSION(DILATION)
+p2 = zeros(m+2,n+2);
+p2(2:m+1,2:n+1) = di;
+
+cl = zeros(m,n);
+
+for i = 1:m
+    for j = 1:n
+        w = p2(i:i+2,j:j+2);
+        cl(i,j) = min(w(:));
+    end
+end
+
+% TOP-HAT = ORIGINAL - OPENING
+top = a - op;
+
+% BOTTOM-HAT = CLOSING - ORIGINAL
+bottom = cl - a;
+
+% Display results
+figure;
+
+subplot(2,3,1);
+imshow(uint8(a));
+title('Original Image');
+
+subplot(2,3,2);
+imshow(uint8(op));
+title('Opening');
+
+subplot(2,3,3);
+imshow(uint8(cl));
+title('Closing');
+
+subplot(2,3,4);
+imshow(uint8(top));
+title('Top-Hat');
+
+subplot(2,3,5);
+imshow(uint8(bottom));
+title('Bottom-Hat');
