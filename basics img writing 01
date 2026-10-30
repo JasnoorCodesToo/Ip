@@ -1,4 +1,4 @@
-clc;clear;close all;
+check this clc;clear;close all;
 
 % Reading and plotting image 1
 a = imread('img.jpg');
@@ -49,12 +49,9 @@ targetsize = [size(a,1), size(a,2)];
 
 img1 = imresize(a, targetsize);
 img2 = imresize(b, targetsize);
-
 img1D = im2double(img1);
 img2D = im2double(img2);
-
 imgs = cell(6,1);
-
 imgs{1} = imabsdiff(img1D, img2D);
 imgs{2} = imsubtract(img1D, img2D);
 imgs{3} = imadd(img1D, img2D);
@@ -93,7 +90,6 @@ title('Multiplication');
  [x,y,pixelValues]=impixel(a);
  disp('selected pixels w cordinates n rgb values');
  disp([x,y,pixelValues]);
- 
 %dct
 dct_img = dct2(a2);
 
@@ -114,4 +110,3 @@ title('DCT Image');
 subplot(1,3,3);
 imshow(idct_img, []);
 title('Inverse DCT Image');
-
