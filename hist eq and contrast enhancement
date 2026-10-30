@@ -1,0 +1,65 @@
+
+clc;
+clear;
+close all;
+
+% Read images
+a = imread('img.png');
+ref = imread('ref.png');
+
+% Convert images to double
+img = im2double(a);
+ref_img = im2double(ref);
+
+% Linear Contrast Stretching
+rmax = max(img(:));
+rmin = min(img(:));
+
+linear = uint8(((img - rmin) / (rmax - rmin)) * 255);
+
+% Histogram Equalization
+equalized = histeq(a);
+
+% Histogram Matching
+matched = imhistmatch(a, ref);
+
+% Display results
+figure;
+
+subplot(2,2,1);
+imshow(a);
+title('Original Image');
+
+subplot(2,2,2);
+imshow(linear);
+title('Linear Contrast Stretching');
+
+subplot(2,2,3);
+imshow(equalized);
+title('Histogram Equalization');
+
+subplot(2,2,4);
+imshow(matched);
+title('Histogram Matching');
+figure;
+%histogram
+
+subplot(2,2,1);
+imhist(a);
+title('Original Image Histogram');
+
+subplot(2,2,2);
+imhist(linear);
+title('Linear Contrast Stretching Histogram');
+
+subplot(2,2,3);
+imhist(equalized);
+title('Histogram Equalization Histogram');
+
+% Histogram with 32 bins
+figure;
+numBins = 32;
+imhist(a, numBins);
+title('Original Histogram with 32 Bins');
+xlabel('Intensity');
+ylabel('Number of Pixels')
