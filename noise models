@@ -1,0 +1,69 @@
+
+clc;
+clear;
+close all;
+
+% Read image
+x = imread('');
+y = rgb2gray(x);
+
+% Add four types of noise
+g = imnoise(y,'gaussian');
+p = imnoise(y,'poisson');
+s = imnoise(y,'salt & pepper');
+sp = imnoise(y,'speckle');
+
+% Display noisy images
+figure;
+subplot(2,2,1);
+imshow(g);
+title('Gaussian Noise');
+
+subplot(2,2,2);
+imshow(p);
+title('Poisson Noise');
+
+subplot(2,2,3);
+imshow(s);
+title('Salt & Pepper Noise');
+
+subplot(2,2,4);
+imshow(sp);
+title('Speckle Noise');
+
+% Remove noise using filters
+d1 = imgaussfilt(g,1);
+d2 = medfilt2(p,[3,3]);
+d3 = medfilt2(s,[3 3]);
+d4 = wiener2(sp,[3 3]);
+
+% Display denoised images
+figure;
+subplot(2,2,1);
+imshow(d1);
+title('Gaussian Denoised');
+
+subplot(2,2,2);
+imshow(d2);
+title('Poisson Denoised');
+
+subplot(2,2,3);
+imshow(d3);
+title('Salt Pepper Denoised');
+
+subplot(2,2,4);
+imshow(d4);
+title('Speckle Denoised');
+
+% display SNR and PSNR
+fprintf('Gaussian: SNR = %.2f dB, PSNR = %.2f dB\n', ...
+snr(double(y(:)), double(y(:))-double(d1(:))), psnr(d1,y));
+
+fprintf('Poisson: SNR = %.2f dB, PSNR = %.2f dB\n', ...
+snr(double(y(:)), double(y(:))-double(d2(:))), psnr(d2,y));
+
+fprintf('Salt & Pepper: SNR = %.2f dB, PSNR = %.2f dB\n', ...
+snr(double(y(:)), double(y(:))-double(d3(:))), psnr(d3,y));
+
+fprintf('Speckle: SNR = %.2f dB, PSNR = %.2f dB\n', ...
+snr(double(y(:)), double(y(:))-double(d4(:))), psnr(d4,y));
