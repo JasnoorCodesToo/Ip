@@ -1,0 +1,65 @@
+clc;
+clear;
+close all;
+
+% Read image
+a = imread('img.png');
+% Convert image to double for gamma transformation
+img = im2double(a);
+% Convert image to double for contrast stretching
+imgdouble = double(a);
+
+% 1. Negative Image
+negative = 255 - imgdouble;
+negative = uint8(negative);
+
+% 2. Linear Contrast Stretching
+rmin = min(imgdouble(:));
+rmax = max(imgdouble(:));
+
+stretch = ((imgdouble - rmin) / (rmax - rmin)) * 255;
+stretch = uint8(stretch);
+
+% 3. Power Law / Gamma Transformation
+c = 1;
+
+gamma05 = c * (img .^ 0.5);
+gamma2 = c * (img .^ 2);
+
+% Display all images
+figure;
+
+subplot(2,3,1);
+imshow(a);
+title('Original Image');
+
+subplot(2,3,2);
+imshow(negative);
+title('Negative Image');
+
+subplot(2,3,3);
+imshow(stretch);
+title('Contrast Stretching');
+
+subplot(2,3,4);
+imshow(gamma05);
+title('Gamma = 0.5');
+
+subplot(2,3,5);
+imshow(gamma2);
+title('Gamma = 2');
+
+%histogram and contrast stetching
+figure;
+
+subplot(1,2,1);
+imhist(rgb2gray(a));
+title('Histogram of Original Image');
+xlabel('Intensity');
+ylabel('Number of Pixels');
+
+subplot(1,2,2);
+imhist(rgb2gray(stretch));
+title('Histogram of Contrast Stretched Image');
+xlabel('Intensity');
+ylabel('Number of Pixels')
