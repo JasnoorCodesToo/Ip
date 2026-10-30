@@ -1,0 +1,58 @@
+```matlab
+clc;
+clear;
+close all;
+
+% Read image
+a = imread('image.png');
+a = im2double(a);
+
+% Convert to grayscale if RGB
+if size(a,3) == 3
+    a = rgb2gray(a);
+end
+
+% Define masks
+H = [-1 -1 -1;
+      2  2  2;
+     -1 -1 -1];
+
+V = [-1  2 -1;
+     -1  2 -1;
+     -1  2 -1];
+
+D1 = [-1 -1  2;
+      -1  2 -1;
+       2 -1 -1];
+
+D2 = [ 2 -1 -1;
+      -1  2 -1;
+     -1 -1  2];
+
+% Apply convolution
+h = conv2(a,H,'same');
+v = conv2(a,V,'same');
+d1 = conv2(a,D1,'same');
+d2 = conv2(a,D2,'same');
+
+% Display results
+subplot(2,3,1);
+imshow(a);
+title('Original Image');
+
+subplot(2,3,2);
+imshow(h,[]);
+title('Horizontal Lines');
+
+subplot(2,3,3);
+imshow(v,[]);
+title('Vertical Lines');
+
+subplot(2,3,4);
+imshow(d1,[]);
+title('Diagonal Lines D1');
+
+subplot(2,3,5);
+imshow(d2,[]);
+title('Diagonal Lines D2');
+```
