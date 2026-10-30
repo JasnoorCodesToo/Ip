@@ -1,0 +1,74 @@
+clc;
+clear;
+close all;
+
+% Read image
+I = imread('cameraman.tif');
+I = im2double(I);
+
+% LOW-PASS FILTERS
+
+% 1. Averaging filter
+A = ones(3,3)/9;
+avg = conv2(I,A,'same');
+
+% 2. Weighted averaging filter
+B = [1 2 1; 2 4 2; 1 2 1]/16;
+wavg = conv2(I,B,'same');
+
+% HIGH-PASS FILTERS
+% 3. Prewitt filter
+Px = [-1 0 1; -1 0 1; -1 0 1];
+Py = [-1 -1 -1; 0 0 0; 1 1 1];
+
+prewittX = conv2(I,Px,'same');
+prewittY = conv2(I,Py,'same');
+
+% 4. Sobel filter
+Sx = [-1 0 1; -2 0 2; -1 0 1];
+Sy = [-1 -2 -1; 0 0 0; 1 2 1];
+
+sobelX = conv2(I,Sx,'same');
+sobelY = conv2(I,Sy,'same');
+
+% 5. Laplacian of Gaussian (LoG)
+H = [0 0 -1 0 0;
+     0 -1 -2 -1 0;
+    -1 -2 16 -2 -1;
+     0 -1 -2 -1 0;
+     0 0 -1 0 0];
+
+logImg = conv2(I,H,'same');
+
+% Display results
+subplot(2,4,1);
+imshow(I);
+title('Original');
+
+subplot(2,4,2);
+imshow(avg,[]);
+title('Averaging');
+
+subplot(2,4,3);
+imshow(wavg,[]);
+title('Weighted Average');
+
+subplot(2,4,4);
+imshow(prewittX,[]);
+title('Prewitt X');
+
+subplot(2,4,5);
+imshow(prewittY,[]);
+title('Prewitt Y');
+
+subplot(2,4,6);
+imshow(sobelX,[]);
+title('Sobel X');
+
+subplot(2,4,7);
+imshow(sobelY,[]);
+title('Sobel Y');
+
+subplot(2,4,8);
+imshow(logImg,[]);
+title('LoG');
